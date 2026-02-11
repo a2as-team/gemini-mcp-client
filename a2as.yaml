@@ -1,0 +1,393 @@
+manifest:
+  version: "0.1.3"
+  schema: https://a2as.org/cert/schema
+  subject:
+    name: angrysky56/gemini-mcp-client
+    source: https://github.com/angrysky56/gemini-mcp-client
+    branch: master
+    commit: "0fcf3c77"
+    scope: [agents/full_mcp_agent/__init__.py, agents/full_mcp_agent/agent.py, configure_models.py, mcp_gemini_client/client.py,
+      servers/gemini_mcp_server.py]
+  issued:
+    by: A2AS.org
+    at: '2026-02-11T16:37:42Z'
+    url: https://a2as.org/certified/agents/angrysky56/gemini-mcp-client
+  signatures:
+    digest: sha256:rsHl8Hzqm8cjd10RJE3PGjbG85KPqgkhQg9575p4CK4
+    key: ed25519:VJqO8qzQkkn5j53MbXt91GtqSrTJs5kbNlMpP5CcEJ8
+    sig: ed25519:uIvJfcFcqM9dK0msWUtzitIPayg6B5T4O_gFZryfqtseNTWBlhvCs4VcM1OfI0C1XwCXNyyefEAUnOqV3J2rBg
+
+agents:
+  agent:
+    type: instance
+    models: [model_name]
+    params:
+      name: full_mcp_agent
+      instruction: agent_instruction
+      description: Full MCP agent with dynamic tool loading and Gemini optimization
+      generate_content_config:
+        ref: generation_config
+      disallow_transfer_to_parent: "False"
+      disallow_transfer_to_peers: "False"
+
+models:
+  model_name:
+    type: literal
+    agents: [agent]
+
+mcp:
+  MCPToolset:
+    type: process
+    params:
+      class: MCPToolset
+      connection_type: StdioServerParameters
+      null: params
+      function: load_mcp_servers_from_config
+
+imports:
+  agent: agent.agent
+  Any: typing.Any
+  AnyUrl: pydantic.AnyUrl
+  argparse: argparse
+  asynccontextmanager: contextlib.asynccontextmanager
+  AsyncExitStack: contextlib.AsyncExitStack
+  asyncio: asyncio
+  ClientSession: mcp.ClientSession
+  FastMCP: mcp.server.fastmcp.FastMCP
+  genai: google.generativeai
+  get_config_manager: config.get_config_manager
+  json: json
+  LlmAgent: google.adk.agents.LlmAgent
+  load_dotenv: dotenv.load_dotenv
+  logging: logging
+  MCPClient: client.MCPClient
+  MCPToolset: google.adk.tools.mcp_tool.MCPToolset
+  models: google.genai.models
+  new_genai: google.genai
+  os: os
+  Path: pathlib.Path
+  pprint: pprint
+  ServerConfig: config.ServerConfig
+  ServerType: config.ServerType
+  stdio_client: mcp.client.stdio.stdio_client
+  StdioServerParameters: google.adk.tools.mcp_tool.mcp_toolset.StdioServerParameters
+  sys: sys
+  types: google.genai.types
+
+functions:
+  __init__:
+    type: sync
+    module: mcp_gemini_client.client
+    args: [self, api_key, model, log_level]
+    params:
+      returns: None
+  __repr__:
+    type: sync
+    module: mcp_gemini_client.client
+    args: [self]
+    params:
+      returns: str
+  _basic_response:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self, user_input]
+    params:
+      returns: str
+  _discover_tools:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self]
+    params:
+      returns: None
+  _generate_contextual_response:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self, user_input]
+    params:
+      returns: str
+  _handle_tool_usage:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self, response, user_input]
+    params:
+      returns: str
+  _setup_logging:
+    type: sync
+    module: mcp_gemini_client.client
+    args: [self, log_level]
+    params:
+      returns: None
+  add_model:
+    type: sync
+    module: configure_models
+    args: [model_name, description]
+  call_tool_directly:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self, tool_name, arguments]
+    params:
+      returns: Any
+  chat_command:
+    type: async
+    module: mcp_gemini_client.cli
+    args: [args]
+    params:
+      returns: None
+  chat_loop:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self]
+    params:
+      returns: None
+  chat_with_gemini:
+    type: tool
+    module: servers.gemini_mcp_server
+    args: [prompt, model]
+    params:
+      returns: str
+  close:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self]
+    params:
+      returns: None
+  code_review_prompt:
+    type: sync
+    module: servers.gemini_mcp_server
+    args: [code, language]
+    params:
+      returns: str
+  config_command:
+    type: sync
+    module: mcp_gemini_client.cli
+    args: [args]
+    params:
+      returns: None
+  connect_to_server:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self, server_script_path]
+    params:
+      returns: None
+  create_agent_instruction:
+    type: sync
+    module: agents.full_mcp_agent.agent
+  creative_writing_prompt:
+    type: sync
+    module: servers.gemini_mcp_server
+    args: [topic, style]
+    params:
+      returns: str
+  gemini_model_comparison:
+    type: tool
+    module: servers.gemini_mcp_server
+    args: [prompt, models]
+    params:
+      returns: dict
+  gemini_status_resource:
+    type: async
+    module: servers.gemini_mcp_server
+    params:
+      returns: str
+  generate_response:
+    type: sync
+    module: mcp_gemini_client.client
+    args: [self, prompt]
+    params:
+      returns: str
+  get_available_models:
+    type: sync
+    module: mcp_gemini_client.client
+    args: [self]
+    params:
+      returns: list[str]
+  get_config_path:
+    type: sync
+    module: agents.full_mcp_agent.agent
+  get_gemini_client:
+    type: async
+    module: servers.gemini_mcp_server
+    params:
+      returns: MCPClient
+  get_model_name:
+    type: sync
+    module: agents.full_mcp_agent.agent
+  get_response:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self, user_input]
+    params:
+      returns: str
+  get_server_info:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self]
+    params:
+      returns: dict
+  info_command:
+    type: async
+    module: mcp_gemini_client.cli
+    args: [args]
+    params:
+      returns: None
+  list_gemini_models:
+    type: tool
+    module: servers.gemini_mcp_server
+    params:
+      returns: list[str]
+  list_models:
+    type: sync
+    module: configure_models
+  list_models_resource:
+    type: async
+    module: servers.gemini_mcp_server
+    params:
+      returns: str
+  load_config:
+    type: sync
+    module: configure_models
+  load_config_file:
+    type: sync
+    module: agents.full_mcp_agent.agent
+    args: [filename]
+  load_mcp_servers_from_config:
+    type: sync
+    module: agents.full_mcp_agent.agent
+  main:
+    type: sync
+    module: configure_models
+  models_command:
+    type: async
+    module: mcp_gemini_client.cli
+    args: [args]
+    params:
+      returns: None
+  process_query:
+    type: sync
+    module: mcp_gemini_client.client
+    args: [self, query]
+    params:
+      returns: dict
+  process_use_tool:
+    type: sync
+    module: mcp_gemini_client.client
+    args: [self, tool_name]
+    params:
+      returns: dict
+  read_resource:
+    type: async
+    module: mcp_gemini_client.client
+    args: [self, uri]
+    params:
+      returns: tuple
+  save_config:
+    type: sync
+    module: configure_models
+    args: [config]
+  servers_command:
+    type: sync
+    module: mcp_gemini_client.cli
+    args: [args]
+    params:
+      returns: None
+  set_gemini_model:
+    type: tool
+    module: servers.gemini_mcp_server
+    args: [model]
+    params:
+      returns: str
+  set_model:
+    type: sync
+    module: mcp_gemini_client.client
+    args: [self, model]
+    params:
+      returns: None
+  stdio_client_context:
+    type: async
+    module: mcp_gemini_client.client
+
+variables:
+  AGENT_NAME:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [agents.full_mcp_agent.agent]
+  DEFAULT_MODEL:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [servers.gemini_mcp_server]
+  GEMINI_API_KEY:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [mcp_gemini_client.client]
+  GEMINI_MODEL:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [agents.full_mcp_agent.agent]
+  GOOGLE_API_KEY:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [servers.gemini_mcp_server]
+  MAX_OUTPUT_TOKENS:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [agents.full_mcp_agent.agent]
+  MCP_CONFIG_DIR:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [agents.full_mcp_agent.agent]
+  TEMPERATURE:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [agents.full_mcp_agent.agent]
+  VERBOSE_LOGGING:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [agents.full_mcp_agent.agent]
+
+files:
+  args.server_path:
+    type: variable
+    actions: [read]
+    params:
+      caller: [Path]
+  config_path:
+    type: variable
+    actions: [read, write]
+    params:
+      caller: [open, json.load]
+      alias: [f]
+  MCP_CONFIG_DIR:
+    type: variable
+    actions: [read]
+    params:
+      caller: [Path]
+  models.json:
+    type: literal
+    actions: [read]
+    params:
+      caller: [load_config, save_config]
+      path: [Path.parent]
+  script_path:
+    type: literal
+    actions: [read]
+    params:
+      caller: [Path(server_script_path)]
+  server_path:
+    type: literal
+    actions: [read]
+    params:
+      caller: [Path(args.server_path)]
+  server_script_path:
+    type: variable
+    actions: [read]
+    params:
+      caller: [Path]
